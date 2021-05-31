@@ -1,0 +1,6 @@
+# git ignore rules
+
+/.vscode/
+/.idea/
+
+**/.DS_Store
