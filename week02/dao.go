@@ -21,8 +21,7 @@ func (*XXXDao) GetRow() (*Result, error) {
 	res := &Result{}
 	s := "select * from test"
 
-	err = db.QueryRow(s).Scan(&res)
-	if err == sql.ErrNoRows {
+	if err = db.QueryRow(s).Scan(&res); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("[SQL]: %s,  [Error]: %v", s, err))
 	}
 	return res, nil
