@@ -18,7 +18,7 @@ func main() {
 	defer cancel()
 
 	// listen os signals
-	sigs := make(chan os.Signal)
+	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	// waiting for signals
@@ -34,10 +34,9 @@ func main() {
 		conf.WithHTTPAddr(":8080"),
 		conf.WithGRPCAddr(":2223"),
 		conf.WithDatabase(conf.DatabaseOptions{
-			URL:  "127.0.0.1",
-			Port: 3306,
-		},
-		))
+			Driver:     "mysql",
+			DataSource: "root:123@tcp(127.0.0.1:3306)/hello?parseTime=True",
+		}))
 
 	// run app
 	pkg.Logo()

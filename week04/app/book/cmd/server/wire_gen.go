@@ -7,18 +7,25 @@ package main
 
 import (
 	"golang.org/x/sync/errgroup"
+	"week04/app/book/internal/biz"
 	"week04/app/book/internal/conf"
+	"week04/app/book/internal/data"
+	"week04/app/book/internal/data/ent"
 	"week04/app/book/internal/server"
+	"week04/app/book/internal/service"
 )
 
 // Injectors from wire.go:
 
 // initApp Inject wire ProvideSet
 func initApp(group *errgroup.Group, option conf.Options) *App {
-	engine := server.NewHttpRouter(option)
+	client := data.NewEntClient(option)
+	bookBusiness := biz.NewBookBusiness()
+	bookService := service.NewBookService(client, bookBusiness)
+	engine := server.NewHttpRouter(option, bookService)
 	httpServer := server.NewHttpServer(group, option, engine)
 	grpcServer := server.NewGRPCServer(group, option)
-	app := newApp(httpServer, grpcServer)
+	app := newApp(httpServer, grpcServer, client)
 	return app
 }
 
@@ -27,9 +34,10 @@ func initApp(group *errgroup.Group, option conf.Options) *App {
 type App struct {
 	HttpServer *server.HttpServer
 	GRPCServer *server.GRPCServer
+	Client     *ent.Client
 }
 
 // newApp return App struct with server.HttpServer and server.GRPCServer
-func newApp(http *server.HttpServer, grpc *server.GRPCServer) *App {
-	return &App{HttpServer: http, GRPCServer: grpc}
+func newApp(http *server.HttpServer, grpc *server.GRPCServer, client *ent.Client) *App {
+	return &App{HttpServer: http, GRPCServer: grpc, Client: client}
 }
