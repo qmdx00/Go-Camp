@@ -2,8 +2,8 @@ package conf
 
 type (
 	DatabaseOptions struct {
-		URL  string
-		Port int
+		Driver     string
+		DataSource string
 	}
 
 	RedisOptions struct {

@@ -21,8 +21,8 @@ var defaultOptions = Options{
 	},
 	Data: DataOptions{
 		Database: DatabaseOptions{
-			URL:  "127.0.0.1",
-			Port: 3306,
+			Driver:  "mysql",
+			DataSource: "",
 		},
 		Redis: RedisOptions{
 			URL:  "127.0.0.1",
