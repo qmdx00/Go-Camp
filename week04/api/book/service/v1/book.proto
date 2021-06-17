@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+
+option go_package = "api/book/service/v1";
+
+service Book {
+    rpc GetBooks (Request) returns (Response) {}
+}
+
+message Request {
+
+}
+
+message Response {
+    message Item {
+        string book_id = 1;
+        int64 number = 2;
+    }
+    repeated Item items = 1;
+}
