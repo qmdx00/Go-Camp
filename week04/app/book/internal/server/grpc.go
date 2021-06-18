@@ -8,17 +8,21 @@ import (
 	"net"
 	"week04/api/book/service/v1"
 	"week04/app/book/internal/conf"
+	"week04/app/book/internal/service"
 )
 
 type GRPCServer struct {
 	gp     *errgroup.Group
 	config conf.GRPCOptions
 	Server *grpc.Server
+
 }
 
 // NewGRPCServer provide GRPCServer with conf.Options ...
-func NewGRPCServer(group *errgroup.Group, options conf.Options) *GRPCServer {
-	return &GRPCServer{gp: group, config: options.Server.GRPC, Server: grpc.NewServer()}
+func NewGRPCServer(group *errgroup.Group, options conf.Options, service *service.GRPCBookService) *GRPCServer {
+	srv := grpc.NewServer()
+	v1.RegisterBookServer(srv, service)
+	return &GRPCServer{gp: group, config: options.Server.GRPC, Server: srv}
 }
 
 func (g *GRPCServer) Serve(ctx context.Context) {
@@ -28,7 +32,6 @@ func (g *GRPCServer) Serve(ctx context.Context) {
 		if err != nil {
 			return err
 		}
-		v1.RegisterBookServer(g.Server, &bookServer{})
 		return g.Server.Serve(lis)
 	})
 

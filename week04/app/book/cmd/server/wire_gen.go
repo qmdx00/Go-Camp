@@ -20,11 +20,12 @@ import (
 // initApp Inject wire ProvideSet
 func initApp(group *errgroup.Group, option conf.Options) *App {
 	client := data.NewEntClient(option)
-	httpBookRepo := service.NewHTTPBookService(client)
+	httpBookRepo := service.NewHTTPBookRepo(client)
 	httpBookBusiness := biz.NewHttpBookBusiness(httpBookRepo)
 	engine := server.NewHttpRouter(option, httpBookBusiness)
 	httpServer := server.NewHttpServer(group, option, engine)
-	grpcServer := server.NewGRPCServer(group, option)
+	grpcBookService := service.NewGRPCBookService(client)
+	grpcServer := server.NewGRPCServer(group, option, grpcBookService)
 	app := newApp(httpServer, grpcServer, client)
 	return app
 }

@@ -13,30 +13,30 @@ type HTTPBookRepo interface {
 }
 
 type HTTPBookBusiness struct {
-	Repo HTTPBookRepo
+	repo HTTPBookRepo
 }
 
 // ListBooks ...
 func (b *HTTPBookBusiness) ListBooks(ctx *gin.Context) {
-	b.Repo.ListBooks(ctx)
+	b.repo.ListBooks(ctx)
 }
 
 // CreateBook ...
 func (b *HTTPBookBusiness) CreateBook(ctx *gin.Context) {
-	b.Repo.CreateBook(ctx)
+	b.repo.CreateBook(ctx)
 }
 
 // DeleteBookById ...
 func (b *HTTPBookBusiness) DeleteBookById(ctx *gin.Context) {
-	b.Repo.DeleteBookById(ctx)
+	b.repo.DeleteBookById(ctx)
 }
 
 // QueryBookById ...
 func (b *HTTPBookBusiness) QueryBookById(ctx *gin.Context) {
-	b.Repo.GetBookById(ctx)
+	b.repo.GetBookById(ctx)
 }
 
 // UpdateBookById ...
 func (b *HTTPBookBusiness) UpdateBookById(ctx *gin.Context) {
-	b.Repo.UpdateBookById(ctx)
+	b.repo.UpdateBookById(ctx)
 }

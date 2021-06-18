@@ -4,10 +4,13 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"week04/app/book/internal/biz"
 	"week04/app/book/internal/data/ent"
 	where "week04/app/book/internal/data/ent/book"
 	"week04/app/book/internal/pkg"
 )
+
+var _ biz.HTTPBookRepo = (*HTTPBookService)(nil)
 
 type HTTPBookService struct {
 	Client *ent.Client
