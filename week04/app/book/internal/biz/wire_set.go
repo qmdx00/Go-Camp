@@ -3,8 +3,8 @@ package biz
 import "github.com/google/wire"
 
 // ProvideSet for biz package ...
-var ProvideSet = wire.NewSet(NewBookBusiness)
+var ProvideSet = wire.NewSet(NewHttpBookBusiness)
 
-func NewBookBusiness() *BookBusiness {
-	return &BookBusiness{}
+func NewHttpBookBusiness(repo HTTPBookRepo) *HTTPBookBusiness {
+	return &HTTPBookBusiness{Repo: repo}
 }

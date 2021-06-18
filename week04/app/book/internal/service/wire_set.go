@@ -7,8 +7,12 @@ import (
 )
 
 // ProvideSet for service package ...
-var ProvideSet = wire.NewSet(NewBookService)
+var ProvideSet = wire.NewSet(NewHTTPBookService)
 
-func NewBookService(client *ent.Client, business *biz.BookBusiness) *BookService {
-	return &BookService{Client: client, Biz: business}
+func NewHTTPBookService(client *ent.Client) biz.HTTPBookRepo {
+	return &HTTPBookService{Client: client}
 }
+
+//func NewGRPCBookService(client *ent.Client) biz.GRPCBookRepo {
+//	return &GRPCBookService{Client: client}
+//}

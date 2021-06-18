@@ -2,26 +2,25 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"week04/app/book/internal/biz"
 	"week04/app/book/internal/conf"
-	"week04/app/book/internal/service"
 )
 
 // NewHttpRouter set gin.Engine as http.Handler
-func NewHttpRouter(options conf.Options, service *service.BookService) *gin.Engine {
+func NewHttpRouter(options conf.Options, biz *biz.HTTPBookBusiness) *gin.Engine {
 	gin.SetMode(options.Mode)
 	router := gin.Default()
-
 	// set book router
-	bookRouter(router, service)
-
+	bookRouter(router, biz)
 	return router
 }
 
-func bookRouter(app *gin.Engine, service *service.BookService) {
+func bookRouter(app *gin.Engine, biz *biz.HTTPBookBusiness) {
 	v := app.Group("v1/books")
 
-	v.POST("/", service.CreateBook)
-	v.GET("/:id", service.GetBookById)
-	v.PUT("/:id", service.UpdateBookById)
-	v.DELETE("/:id", service.DeleteBookById)
+	v.GET("/", biz.ListBooks)
+	v.POST("/", biz.CreateBook)
+	v.GET("/:id", biz.QueryBookById)
+	v.PUT("/:id", biz.UpdateBookById)
+	v.DELETE("/:id", biz.DeleteBookById)
 }

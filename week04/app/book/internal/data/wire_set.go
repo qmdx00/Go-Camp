@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/wire"
 	"week04/app/book/internal/conf"
@@ -12,6 +13,10 @@ var ProvideSet = wire.NewSet(NewEntClient)
 
 func NewEntClient(options conf.Options) *ent.Client {
 	client, err := ent.Open(options.Data.Database.Driver, options.Data.Database.DataSource)
+	if err != nil {
+		panic(err)
+	}
+	err = client.Schema.Create(context.Background())
 	if err != nil {
 		panic(err)
 	}
