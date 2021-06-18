@@ -16,9 +16,13 @@ func NewEntClient(options conf.Options) *ent.Client {
 	if err != nil {
 		panic(err)
 	}
+
+	defer client.Close()
+
 	err = client.Schema.Create(context.Background())
 	if err != nil {
 		panic(err)
 	}
+
 	return client
 }
