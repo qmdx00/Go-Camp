@@ -18,20 +18,20 @@ func main() {
 
 	ClearDB(ctx, client)
 
-	// pipline 批量插入数据
-	pipline := client.Pipeline()
+	// pipeline 批量插入数据
+	pipeline := client.Pipeline()
 	for i := range [N]struct{}{} {
 		// 每条数据 value 大小为 5kb
-		pipline.Set(ctx, fmt.Sprintf("hello:%d", i), GenerateValueWithBytes(5120), 0)
+		pipeline.Set(ctx, fmt.Sprintf("hello:%d", i), GenerateValueWithBytes(100), 0)
 	}
-	if _, err := pipline.Exec(ctx); err != nil {
+	if _, err := pipeline.Exec(ctx); err != nil {
 		panic(err)
 	}
 
 	fmt.Println("done")
 }
 
-// 生成指定 byte 大小的随机字符串
+// GenerateValueWithBytes 生成指定 byte 大小的随机字符串
 func GenerateValueWithBytes(size int) string {
 	var res []byte
 	str := "ABCDEFGHIJKLMNOPQRSTUVWSYZ0123456789"
@@ -41,7 +41,7 @@ func GenerateValueWithBytes(size int) string {
 	return string(res)
 }
 
-// 清空 DB1
+// ClearDB 清空 DB1
 func ClearDB(ctx context.Context, client *redis.Client) {
 	_ = client.FlushDB(ctx)
 }
