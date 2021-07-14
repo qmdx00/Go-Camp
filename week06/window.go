@@ -57,13 +57,12 @@ func NewSlidingWindow(ctx context.Context, duration int, numBuckets int) *Window
 
 // Start 启动滑动窗口订阅事件流
 func (w *Window) Start(events <-chan *Event) {
-	wait := make(chan struct{})
 	ticker := time.NewTicker(w.duration)
 	go func() {
 		for {
 			select {
 			case <-w.ctx.Done():
-				wait <- struct{}{}
+				goto Label
 			case <-ticker.C:
 				go w.statistic()
 			case event := <-events:
@@ -80,8 +79,9 @@ func (w *Window) Start(events <-chan *Event) {
 				}
 			}
 		}
+	Label:
+		close(w.subscriber)
 	}()
-	<-wait
 }
 
 func (w *Window) Subscribe() <-chan *Summary {
