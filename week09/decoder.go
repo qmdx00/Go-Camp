@@ -90,5 +90,9 @@ func (d *Decoder) Sequence() uint32 {
 }
 
 func (d *Decoder) Body() []byte {
-	return d.body
+	if d.body == nil {
+		return []byte{}
+	} else {
+		return d.body
+	}
 }
