@@ -1,11 +1,16 @@
-package main
+package week09
+
+import (
+	"encoding/binary"
+	"errors"
+)
 
 // Decoder for goim packet
 // https://github.com/Terry-Mao/goim/blob/e742c99ad76e626d5f6df8b33bc47ca005501980/api/protocol/protocol.go#L25
 
 const (
 	// MaxBodySize max body size
-	MaxBodySize = int32(1 << 12) // 4096
+	MaxBodySize = uint32(1 << 12) // 4096
 )
 
 const (
@@ -15,32 +20,75 @@ const (
 	_verSize       = 2
 	_opSize        = 4
 	_seqSize       = 4
-	_heartSize     = 4
 	_rawHeaderSize = _packSize + _headerSize + _verSize + _opSize + _seqSize
-	_maxPackSize   = MaxBodySize + int32(_rawHeaderSize)
+	_maxPackSize   = MaxBodySize + uint32(_rawHeaderSize)
 	// offset
 	_packOffset   = 0
 	_headerOffset = _packOffset + _packSize
 	_verOffset    = _headerOffset + _headerSize
 	_opOffset     = _verOffset + _verSize
 	_seqOffset    = _opOffset + _opSize
-	_heartOffset  = _seqOffset + _seqSize
+	_bodyOffset   = _seqOffset + _seqSize
 )
 
+type Idecoder interface {
+	PacketLen() uint32
+	HeaderLen() uint16
+	Version() uint16
+	Operation() uint32
+	Sequence() uint32
+	Body() []byte
+}
+
 type Decoder struct {
-	pack    []byte
-	header  []byte
-	version []byte
-	seq     []byte
-	heart   []byte
+	packetLen uint32
+	headerLen uint16
+	version   uint16
+	operation uint32
+	sequence  uint32
+	body      []byte
 }
 
-func Decode(buf []byte) *Decoder {
+func Decode(buf []byte) (Idecoder, error) {
 	decoder := &Decoder{}
-	// Todo
-	return decoder
+
+	decoder.packetLen = binary.BigEndian.Uint32(buf[_packOffset : _packOffset+_packSize])
+	binary.BigEndian.Uint16(buf[_headerOffset : _headerOffset+_headerSize])
+	decoder.version = binary.BigEndian.Uint16(buf[_verOffset : _verOffset+_verSize])
+	decoder.operation = binary.BigEndian.Uint32(buf[_opOffset : _opOffset+_opSize])
+	decoder.sequence = binary.BigEndian.Uint32(buf[_seqOffset : _seqOffset+_seqSize])
+
+	if decoder.packetLen > _maxPackSize {
+		return nil, errors.New("Error Packet Length ")
+	}
+
+	if _bodyLen := int(decoder.packetLen - uint32(decoder.headerLen)); _bodyLen > 0 {
+		decoder.body = buf[_bodyOffset : _bodyOffset+_bodyLen]
+	}
+
+	return decoder, nil
 }
 
-func (d *Decoder) Pack() string {
-	return string(d.pack)
+func (d *Decoder) PacketLen() uint32 {
+	return d.packetLen
+}
+
+func (d *Decoder) HeaderLen() uint16 {
+	return d.headerLen
+}
+
+func (d *Decoder) Version() uint16 {
+	return d.version
+}
+
+func (d *Decoder) Operation() uint32 {
+	return d.operation
+}
+
+func (d *Decoder) Sequence() uint32 {
+	return d.sequence
+}
+
+func (d *Decoder) Body() []byte {
+	return d.body
 }

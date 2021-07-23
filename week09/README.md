@@ -21,3 +21,60 @@
 
 > 实现一个从 socket connection 中解码出 goim 协议的解码器。
 
+```go
+func Decode(buf []byte) (Idecoder, error) {
+	decoder := &Decoder{}
+
+	decoder.packetLen = binary.BigEndian.Uint32(buf[_packOffset : _packOffset+_packSize])
+	binary.BigEndian.Uint16(buf[_headerOffset : _headerOffset+_headerSize])
+	decoder.version = binary.BigEndian.Uint16(buf[_verOffset : _verOffset+_verSize])
+	decoder.operation = binary.BigEndian.Uint32(buf[_opOffset : _opOffset+_opSize])
+	decoder.sequence = binary.BigEndian.Uint32(buf[_seqOffset : _seqOffset+_seqSize])
+
+	if decoder.packetLen > _maxPackSize {
+		return nil, errors.New("Error Packet Length ")
+	}
+
+	if _bodyLen := int(decoder.packetLen - uint32(decoder.headerLen)); _bodyLen > 0 {
+		decoder.body = buf[_bodyOffset : _bodyOffset+_bodyLen]
+	}
+
+	return decoder, nil
+}
+```
+
+```go
+type Idecoder interface {
+	PacketLen() uint32
+	HeaderLen() uint16
+	Version() uint16
+	Operation() uint32
+	Sequence() uint32
+	Body() []byte
+}
+```
+
+```go
+const (
+	// MaxBodySize max body size
+	MaxBodySize = uint32(1 << 12) // 4096
+)
+
+const (
+	// size
+	_packSize      = 4
+	_headerSize    = 2
+	_verSize       = 2
+	_opSize        = 4
+	_seqSize       = 4
+	_rawHeaderSize = _packSize + _headerSize + _verSize + _opSize + _seqSize
+	_maxPackSize   = MaxBodySize + uint32(_rawHeaderSize)
+	// offset
+	_packOffset   = 0
+	_headerOffset = _packOffset + _packSize
+	_verOffset    = _headerOffset + _headerSize
+	_opOffset     = _verOffset + _verSize
+	_seqOffset    = _opOffset + _opSize
+	_bodyOffset   = _seqOffset + _seqSize
+)
+```
