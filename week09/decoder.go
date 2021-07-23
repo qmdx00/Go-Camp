@@ -53,7 +53,7 @@ func Decode(buf []byte) (Idecoder, error) {
 	decoder := &Decoder{}
 
 	decoder.packetLen = binary.BigEndian.Uint32(buf[_packOffset : _packOffset+_packSize])
-	binary.BigEndian.Uint16(buf[_headerOffset : _headerOffset+_headerSize])
+	decoder.headerLen = binary.BigEndian.Uint16(buf[_headerOffset : _headerOffset+_headerSize])
 	decoder.version = binary.BigEndian.Uint16(buf[_verOffset : _verOffset+_verSize])
 	decoder.operation = binary.BigEndian.Uint32(buf[_opOffset : _opOffset+_opSize])
 	decoder.sequence = binary.BigEndian.Uint32(buf[_seqOffset : _seqOffset+_seqSize])
