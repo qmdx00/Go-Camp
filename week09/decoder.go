@@ -59,7 +59,7 @@ func Decode(buf []byte) (Idecoder, error) {
 	decoder.sequence = binary.BigEndian.Uint32(buf[_seqOffset : _seqOffset+_seqSize])
 
 	if decoder.packetLen > _maxPackSize {
-		return nil, errors.New("Error Packet Length ")
+		return nil, errors.New("error package length")
 	}
 
 	if _bodyLen := int(decoder.packetLen - uint32(decoder.headerLen)); _bodyLen > 0 {
