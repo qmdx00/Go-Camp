@@ -21,7 +21,7 @@ func main() {
 	// pipeline 批量插入数据
 	pipeline := client.Pipeline()
 	for i := range [N]struct{}{} {
-		// 每条数据 value 大小为 5kb
+		// 每条数据 value 大小为 100b
 		pipeline.Set(ctx, fmt.Sprintf("hello:%d", i), GenerateValueWithBytes(100), 0)
 	}
 	if _, err := pipeline.Exec(ctx); err != nil {
